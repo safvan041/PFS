@@ -1,0 +1,73 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block title %}Home - Blog{% endblock %}
+
+{% block content %}
+<!-- Search Bar -->
+<form method="GET" action="{% url 'home' %}" style="display:inline-block; margin-left: 20px;">
+    <input type="text" name="q" placeholder="Search..." value="{{ request.GET.q }}">
+    <button type="submit">Search</button>
+</form>
+
+<h1>Blog Home</h1>
+
+<!-- Authentication Links -->
+{% if user.is_authenticated %}
+    <ul>
+        <li><a href="{% url 'add_post' %}">Add Post</a></li>
+        <!-- <li><a href="{% url 'logout' %}">Logout ({{ user.username }})</a></li> -->
+    </ul>
+{% else %}
+    <ul>
+        <li><a href="{% url 'login' %}">Login</a></li>
+        <li><a href="{% url 'register' %}">Register</a></li>
+    </ul>
+{% endif %}
+
+<!-- Featured Posts Section -->
+{% if featured_posts %}
+    <h2>Featured Posts</h2>
+    <ul>
+        {% for post in featured_posts %}
+            <li><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<!-- Search Results Section -->
+{% if request.GET.q %}
+    <h2>Search Results for "{{ request.GET.q }}"</h2>
+{% endif %}
+
+<!-- Display Blog Posts -->
+{% if posts %}
+    {% for post in posts %}
+        <h2><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h2>
+        <p>{{ post.content|truncatewords:20 }}</p>
+        <p><small>Author: {{ post.author }}</small></p>
+        <p><small>Published on: {{ post.created_at }}</small></p>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>No blog posts available{% if request.GET.q %} matching "{{ request.GET.q }}"{% endif %}.</p>
+{% endif %}
+
+<!-- Pagination Controls -->
+<div class="pagination">
+    <span class="step-links">
+        {% if posts.has_previous %}
+            <a href="?page=1&q={{ request.GET.q }}">First</a>
+            <a href="?page={{ posts.previous_page_number }}&q={{ request.GET.q }}">Previous</a>
+        {% endif %}
+        <span class="current">
+            Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+        </span>
+        {% if posts.has_next %}
+            <a href="?page={{ posts.next_page_number }}&q={{ request.GET.q }}">Next</a>
+            <a href="?page={{ posts.paginator.num_pages }}&q={{ request.GET.q }}">Last</a>
+        {% endif %}
+    </span>
+</div>
+
+{% endblock %}

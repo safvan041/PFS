@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /admin/
+Allow: /post/
+Sitemap: https://www.blog_project_by_bk.com/sitemap.xml

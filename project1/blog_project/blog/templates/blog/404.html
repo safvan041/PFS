@@ -1,0 +1,10 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Page Not Found{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Oops! Page Not Found</h1>
+        <p>The page you're looking for doesn't exist. You can go back to the <a href="{% url 'home' %}">home page</a>.</p>
+    </div>
+{% endblock %}

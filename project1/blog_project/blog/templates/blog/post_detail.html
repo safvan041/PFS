@@ -1,11 +1,10 @@
-{% extends 'blog/base.html' %}
-{% block title %}{{ post.title }}{% endblock %}
+
+<!-- {% block title %}{{ post.title }}{% endblock %}
 {% block description %}{{ post.content|truncatewords:30 }}{% endblock %}
 {% block keywords %}{{ post.title }}, blog, python, tutorials{% endblock %}
 {% block og_title %}{{ post.title }}{% endblock %}
-{% block og_description %}{{ post.content|truncatewords:30 }}{% endblock %}
-<!-- {% block og_image %}{{ post.image.url if post.image else 'default-image-url' }}{% endblock %} -->
-{% block og_url %}{{ request.build_absolute_uri }}</block %
+{% block og_description %}{{ post.content|truncatewords:30 }}{% endblock %} -->
+
 
 <h2>{{ post.title }}</h2>
 <p>{{ post.content }}</p>

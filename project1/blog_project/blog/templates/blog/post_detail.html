@@ -8,13 +8,26 @@
 
 <h2>{{ post.title }}</h2>
 <p>{{ post.content }}</p>
-<h3>Comments:</h3>
 
-{% for comment in comments %}
-    <p><strong>{{ comment.author }}</strong>: {{ comment.content }} ({{ comment.created_at }})</p>
-{% empty %}
-    <p>No comments yet. Be the first to comment!</p>
-{% endfor %}
+<h3>Comments:</h3>
+<div id="comments-section">
+    {% for comment in comments %}
+        <p><strong>{{ comment.author }}</strong>: {{ comment.content }} ({{ comment.created_at|date:"M d, Y H:i" }})</p>
+    {% empty %}
+        <p>No comments yet. Be the first to comment!</p>
+    {% endfor %}
+</div>
+
+<!-- Pagination Controls -->
+<div id="pagination-controls">
+    {% if comments.has_previous %}
+        <a href="?page={{ comments.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    {% if comments.has_next %}
+        <a href="?page={{ comments.next_page_number }}">Load More Comments</a>
+    {% endif %}
+</div>
 
 <h3>Leave a Comment:</h3>
 <form method="POST">

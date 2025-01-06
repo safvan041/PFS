@@ -25,14 +25,21 @@ def home(request):
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     comments = post.comments.all()
+    
     like_count = post.like_dislike.filter(is_like=True).count()
     
     if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            new_comment = form.save(commit=False)
-            new_comment.post = post
-            new_comment.save()
+        if request.user.is_authenticated:
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                new_comment = form.save(commit=False)
+                new_comment.post = post
+                new_comment.save()
+                # Optionally, redirect to the same page to prevent form resubmission
+                return redirect('post_detail', post_id=post.id)
+        else:
+            messages.error(request, "You must be logged in to comment.")
+            return redirect('login')  # Redirect to login page or handle as needed
     else:
         form = CommentForm()
 
@@ -119,15 +126,19 @@ def profile(request):
     
     return render(request, 'blog/profile.html', {'form': form})
 
-@login_required
+
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
 
-    existing_like = LikeDislike.objects.filter(post=post, user=request.user).first()
-    if existing_like:
-        existing_like.is_like = not existing_like.is_like
-        existing_like.save()
+    if request.user.is_authenticated:
+        existing_like = LikeDislike.objects.filter(post=post, user=request.user).first()
+        if existing_like:
+            existing_like.is_like = not existing_like.is_like
+            existing_like.save()
+        else:
+            LikeDislike.objects.create(post=post, user=request.user, is_like=True)
     else:
-        LikeDislike.objects.create(post=post, user=request.user, is_like=True)
+        messages.error(request, "You must be logged in to like a post.")
+        return redirect('login')  # Redirect to login page or handle as needed
 
-    return redirect('post_detail', post_id=post.id)  # Use `post_id` here
+    return redirect('post_detail', post_id=post.id)
